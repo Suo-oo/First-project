@@ -2,8 +2,17 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>生日祝福</title>
+    <title>生日祝福完整版</title>
+    <!-- 添加移动端视口设置 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <style>
+        /* 通用样式重置 */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
         /* 初始界面样式 */
         #login-screen {
             position: fixed;
@@ -17,7 +26,7 @@
             align-items: center;
             justify-content: center;
             z-index: 1000;
-            transition: opacity 0.5s;
+            padding: 20px;
         }
 
         /* 动画界面样式 */
@@ -25,8 +34,8 @@
             position: fixed;
             top: 0;
             left: 0;
-            width: 100vw;
-            height: 100vh;
+            width: 100%;
+            height: 100%;
             background: black;
             overflow: hidden;
         }
@@ -46,7 +55,7 @@
             position: absolute;
             top: 20px;
             left: 20px;
-            max-width: calc(100% - 40px);
+            width: calc(100% - 40px);
             color: white;
             font-size: 24px;
             line-height: 1.5;
@@ -62,22 +71,40 @@
         }
 
         @keyframes charAppear {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* 移动端适配 */
+        @media (max-width: 768px) {
+            #login-screen h1 {
+                font-size: 24px;
+                text-align: center;
+            }
+
+            #password-input {
+                width: 80% !important;
+            }
+
+            #typewriter-container {
+                font-size: 18px;
+            }
         }
     </style>
 </head>
 <body>
     <!-- 初始登录界面 -->
     <div id="login-screen">
-        <h1 style="font-size: 32px; margin-bottom: 30px;">🎂生日快乐🎂</h1>
+        <h1>🎂生日快乐🎂</h1>
         <input type="password" id="password-input"
-               style="padding: 8px 12px; font-size: 16px; margin-bottom: 15px;"
                placeholder="请输入密码">
-        <button onclick="checkPassword()"
-                style="padding: 8px 20px; font-size: 16px; background: #FFB6C1;">
-            验证祝福
-        </button>
+        <button onclick="checkPassword()">验证祝福</button>
     </div>
 
     <!-- 动画界面容器 -->
@@ -90,13 +117,13 @@
         const CONFIG = {
             password: "123456",         // 设置密码
             specialName: "某某某",       // 设置提示名字
-            bgTexts: ["Happy", "Birthday", "天天快乐", "🎂", "🎉"], // 背景文字
+            bgTexts: ["Happy", "Birthday", "天天快乐", "🎂", "🎉"],
             floatSpeed: 2,              // 飘动速度（像素/帧）
 
-            // 新增打字效果配置
-            textContent: "亲爱的朋友：\n在这特别的日子里，愿所有美好如期而至！\n祝你心想事成，万事如意！🎉", // 要显示的长文字
-            typeInterval: 100,          // 每个字符出现间隔（毫秒）
-            startDelay: 2000            // 开始显示的延迟时间（毫秒）
+            // 打字效果配置
+            textContent: "亲爱的朋友：\n在这特别的日子里，愿所有美好如期而至！\n祝你心想事成，万事如意！🎉",
+            typeInterval: 100,          // 字符间隔（毫秒）
+            startDelay: 2000            // 开始延迟（毫秒）
         };
         // ==========================================
 
@@ -104,10 +131,12 @@
         function checkPassword() {
             const input = document.getElementById('password-input');
             if (input.value === CONFIG.password) {
+                // 修复移动端缩放问题
+                document.documentElement.style.overflow = 'hidden';
                 document.getElementById('login-screen').style.display = 'none';
                 startAnimation();
             } else {
-                alert(`密码错误，请重新输入✨密码肯定是${CONFIG.specialName}生日啦`);
+                alert(`密码错误，请重新输入✨密码肯定是${CONFIG.specialName}的生日啦`);
                 input.value = '';
             }
         }
@@ -139,64 +168,62 @@
                 requestAnimationFrame(animate);
             }
 
-            // 背景文字动画
-            function createBgText() {
-                const text = document.createElement('div');
-                text.className = 'float-text';
-                text.style.left = Math.random() * 90 + '%';
-                text.style.top = Math.random() * 90 + '%';
-                text.style.color = `rgba(255,255,255,${Math.random()*0.3+0.2})`;
-                text.style.fontSize = '24px';
-                text.textContent = CONFIG.bgTexts[Math.floor(Math.random() * CONFIG.bgTexts.length)];
-                screen.appendChild(text);
-
-                setTimeout(() => text.remove(), 3000);
-            }
-
             // 启动动画循环
             setInterval(createFloatingText, 300);
-            setInterval(createBgText, 1000);
 
             // 启动打字效果
             setTimeout(startTypewriterEffect, CONFIG.startDelay);
         }
 
-        // 新增打字效果函数
+        // 改进后的打字效果函数
         function startTypewriterEffect() {
             const container = document.getElementById('typewriter-container');
+            container.innerHTML = '';
+
             let currentLine = document.createElement('div');
             container.appendChild(currentLine);
 
             let charIndex = 0;
             const textArray = CONFIG.textContent.split('');
 
+            // 创建测量元素
+            const measureSpan = document.createElement('span');
+            measureSpan.style.visibility = 'hidden';
+            measureSpan.style.position = 'absolute';
+            measureSpan.style.whiteSpace = 'nowrap';
+            document.body.appendChild(measureSpan);
+
             function typeNextChar() {
-                if (charIndex >= textArray.length) return;
+                if (charIndex >= textArray.length) {
+                    document.body.removeChild(measureSpan);
+                    return;
+                }
 
                 const char = textArray[charIndex];
-                const span = document.createElement('span');
-                span.className = 'type-char';
-                span.textContent = char;
 
-                // 处理换行
+                // 处理换行符
                 if (char === '\n') {
                     currentLine = document.createElement('div');
                     container.appendChild(currentLine);
-                } else {
-                    // 检查是否超出容器宽度
-                    const testSpan = document.createElement('span');
-                    testSpan.textContent = char;
-                    currentLine.appendChild(testSpan);
-
-                    if (currentLine.offsetWidth > container.offsetWidth - 20) {
-                        currentLine.removeChild(testSpan);
-                        currentLine = document.createElement('div');
-                        container.appendChild(currentLine);
-                        currentLine.appendChild(testSpan);
-                    } else {
-                        currentLine.replaceChild(span, testSpan);
-                    }
+                    charIndex++;
+                    return setTimeout(typeNextChar, CONFIG.typeInterval);
                 }
+
+                // 测量文字宽度
+                measureSpan.textContent = currentLine.textContent + char;
+                const currentWidth = measureSpan.offsetWidth;
+
+                // 自动换行逻辑
+                if (currentWidth > container.offsetWidth) {
+                    currentLine = document.createElement('div');
+                    container.appendChild(currentLine);
+                }
+
+                // 创建字符元素
+                const span = document.createElement('span');
+                span.className = 'type-char';
+                span.textContent = char;
+                currentLine.appendChild(span);
 
                 charIndex++;
                 setTimeout(typeNextChar, CONFIG.typeInterval);
@@ -208,6 +235,11 @@
         // 回车键支持
         document.getElementById('password-input').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') checkPassword();
+        });
+
+        // 移动端输入优化
+        document.getElementById('password-input').addEventListener('blur', () => {
+            window.scrollTo(0, 0);
         });
     </script>
 </body>
