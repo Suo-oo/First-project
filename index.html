@@ -12,7 +12,6 @@
             margin: 0;
             padding: 0;
         }
-
         /* 初始界面样式 */
         #login-screen {
             position: fixed;
@@ -28,7 +27,6 @@
             z-index: 1000;
             padding: 20px;
         }
-
         /* 动画界面样式 */
         #animation-screen {
             position: fixed;
@@ -39,7 +37,6 @@
             background: black;
             overflow: hidden;
         }
-
         /* 飘动文字样式 */
         .float-text {
             position: absolute;
@@ -49,7 +46,6 @@
             font-family: 'Microsoft YaHei', sans-serif;
             z-index: 1;
         }
-
         /* 打字效果容器 */
         #typewriter-container {
             position: absolute;
@@ -62,36 +58,33 @@
             z-index: 2;
             pointer-events: none;
         }
-
         /* 单个字符样式 */
         .type-char {
             opacity: 0;
             animation: charAppear 0.5s forwards;
             display: inline-block;
         }
-
         @keyframes charAppear {
-            from {
+            from { 
                 opacity: 0;
                 transform: translateX(-20px);
             }
-            to {
+            to { 
                 opacity: 1;
                 transform: translateX(0);
             }
         }
-
         /* 移动端适配 */
         @media (max-width: 768px) {
             #login-screen h1 {
                 font-size: 24px;
                 text-align: center;
             }
-
+            
             #password-input {
                 width: 80% !important;
             }
-
+            
             #typewriter-container {
                 font-size: 18px;
             }
@@ -101,32 +94,33 @@
 <body>
     <!-- 初始登录界面 -->
     <div id="login-screen">
-        <h1>🎂生日快乐🎂</h1>
+        <h1 style="font-size: 32px; margin-bottom: 30px;">🎂生日快乐🎂</h1>
         <input type="password" id="password-input"
+               style="padding: 8px 12px; font-size: 16px; margin-bottom: 15px;"
                placeholder="请输入密码">
-        <button onclick="checkPassword()">验证祝福</button>
+        <button onclick="checkPassword()"
+                style="padding: 8px 20px; font-size: 16px; background: #FFB6C1;">
+            验证祝福
+        </button>
     </div>
-
     <!-- 动画界面容器 -->
     <div id="animation-screen" style="display: none;">
         <div id="typewriter-container"></div>
     </div>
-
     <script>
         // ============== 自定义设置区域 ==============
         const CONFIG = {
             password: "123456",         // 设置密码
             specialName: "某某某",       // 设置提示名字
-            bgTexts: ["Happy", "Birthday", "天天快乐", "🎂", "🎉"],
+            bgTexts: ["Happy", "Birthday", "天天快乐", "🎂", "🎉"], 
             floatSpeed: 2,              // 飘动速度（像素/帧）
-
+            
             // 打字效果配置
-            textContent: "亲爱的朋友：\n在这特别的日子里，愿所有美好如期而至！\n祝你心想事成，万事如意！🎉",
+            textContent: "亲爱的朋友：\n在这特别的日子里，愿所有美好如期而至！\n祝你心想事成，万事如意！🎉", 
             typeInterval: 100,          // 字符间隔（毫秒）
             startDelay: 2000            // 开始延迟（毫秒）
         };
         // ==========================================
-
         // 密码验证函数
         function checkPassword() {
             const input = document.getElementById('password-input');
@@ -140,12 +134,10 @@
                 input.value = '';
             }
         }
-
         // 启动动画
         function startAnimation() {
             const screen = document.getElementById('animation-screen');
             screen.style.display = 'block';
-
             // 飘动文字动画
             function createFloatingText() {
                 const text = document.createElement('div');
@@ -154,11 +146,9 @@
                 text.style.bottom = '0px';
                 text.textContent = '生日快乐🎈';
                 screen.appendChild(text);
-
                 function animate() {
                     const currentBottom = parseFloat(text.style.bottom) || 0;
                     text.style.bottom = (currentBottom + CONFIG.floatSpeed) + 'px';
-
                     if (currentBottom < window.innerHeight + 50) {
                         requestAnimationFrame(animate);
                     } else {
@@ -167,40 +157,49 @@
                 }
                 requestAnimationFrame(animate);
             }
-
+            // 背景文字动画
+            function createBgText() {
+                const text = document.createElement('div');
+                text.className = 'float-text';
+                text.style.left = Math.random() * 90 + '%';
+                text.style.top = Math.random() * 90 + '%';
+                text.style.color = `rgba(255,255,255,${Math.random()*0.3+0.2})`;
+                text.style.fontSize = '24px';
+                text.textContent = CONFIG.bgTexts[Math.floor(Math.random() * CONFIG.bgTexts.length)];
+                screen.appendChild(text);
+                setTimeout(() => text.remove(), 3000);
+            }
             // 启动动画循环
             setInterval(createFloatingText, 300);
-
+            setInterval(createBgText, 1000);
+            
             // 启动打字效果
             setTimeout(startTypewriterEffect, CONFIG.startDelay);
         }
-
         // 改进后的打字效果函数
         function startTypewriterEffect() {
             const container = document.getElementById('typewriter-container');
             container.innerHTML = '';
-
+            
             let currentLine = document.createElement('div');
             container.appendChild(currentLine);
-
+            
             let charIndex = 0;
             const textArray = CONFIG.textContent.split('');
-
+            
             // 创建测量元素
             const measureSpan = document.createElement('span');
             measureSpan.style.visibility = 'hidden';
             measureSpan.style.position = 'absolute';
             measureSpan.style.whiteSpace = 'nowrap';
             document.body.appendChild(measureSpan);
-
             function typeNextChar() {
                 if (charIndex >= textArray.length) {
                     document.body.removeChild(measureSpan);
                     return;
                 }
-
                 const char = textArray[charIndex];
-
+                
                 // 处理换行符
                 if (char === '\n') {
                     currentLine = document.createElement('div');
@@ -208,35 +207,29 @@
                     charIndex++;
                     return setTimeout(typeNextChar, CONFIG.typeInterval);
                 }
-
                 // 测量文字宽度
                 measureSpan.textContent = currentLine.textContent + char;
                 const currentWidth = measureSpan.offsetWidth;
-
+                
                 // 自动换行逻辑
                 if (currentWidth > container.offsetWidth) {
                     currentLine = document.createElement('div');
                     container.appendChild(currentLine);
                 }
-
                 // 创建字符元素
                 const span = document.createElement('span');
                 span.className = 'type-char';
                 span.textContent = char;
                 currentLine.appendChild(span);
-
                 charIndex++;
                 setTimeout(typeNextChar, CONFIG.typeInterval);
             }
-
             typeNextChar();
         }
-
         // 回车键支持
         document.getElementById('password-input').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') checkPassword();
         });
-
         // 移动端输入优化
         document.getElementById('password-input').addEventListener('blur', () => {
             window.scrollTo(0, 0);
