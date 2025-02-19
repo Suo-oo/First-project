@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>生日祝福</title>
+    <style>
+        /* 初始界面样式 */
+        #login-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            transition: opacity 0.5s;
+        }
+
+        /* 动画界面样式 */
+        #animation-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: black;
+            overflow: hidden;
+        }
+
+        /* 飘动文字样式 */
+        .float-text {
+            position: absolute;
+            color: white;
+            font-size: 16px;
+            white-space: nowrap;
+            font-family: 'Microsoft YaHei', sans-serif;
+            z-index: 1;
+        }
+
+        /* 打字效果容器 */
+        #typewriter-container {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            max-width: calc(100% - 40px);
+            color: white;
+            font-size: 24px;
+            line-height: 1.5;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        /* 单个字符样式 */
+        .type-char {
+            opacity: 0;
+            animation: charAppear 0.5s forwards;
+            display: inline-block;
+        }
+
+        @keyframes charAppear {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <!-- 初始登录界面 -->
+    <div id="login-screen">
+        <h1 style="font-size: 32px; margin-bottom: 30px;">🎂生日快乐🎂</h1>
+        <input type="password" id="password-input"
+               style="padding: 8px 12px; font-size: 16px; margin-bottom: 15px;"
+               placeholder="请输入密码">
+        <button onclick="checkPassword()"
+                style="padding: 8px 20px; font-size: 16px; background: #FFB6C1;">
+            验证祝福
+        </button>
+    </div>
+
+    <!-- 动画界面容器 -->
+    <div id="animation-screen" style="display: none;">
+        <div id="typewriter-container"></div>
+    </div>
+
+    <script>
+        // ============== 自定义设置区域 ==============
+        const CONFIG = {
+            password: "123456",         // 设置密码
+            specialName: "某某某",       // 设置提示名字
+            bgTexts: ["Happy", "Birthday", "天天快乐", "🎂", "🎉"], // 背景文字
+            floatSpeed: 2,              // 飘动速度（像素/帧）
+
+            // 新增打字效果配置
+            textContent: "亲爱的朋友：\n在这特别的日子里，愿所有美好如期而至！\n祝你心想事成，万事如意！🎉", // 要显示的长文字
+            typeInterval: 100,          // 每个字符出现间隔（毫秒）
+            startDelay: 2000            // 开始显示的延迟时间（毫秒）
+        };
+        // ==========================================
+
+        // 密码验证函数
+        function checkPassword() {
+            const input = document.getElementById('password-input');
+            if (input.value === CONFIG.password) {
+                document.getElementById('login-screen').style.display = 'none';
+                startAnimation();
+            } else {
+                alert(`密码错误，请重新输入✨密码肯定是${CONFIG.specialName}生日啦`);
+                input.value = '';
+            }
+        }
+
+        // 启动动画
+        function startAnimation() {
+            const screen = document.getElementById('animation-screen');
+            screen.style.display = 'block';
+
+            // 飘动文字动画
+            function createFloatingText() {
+                const text = document.createElement('div');
+                text.className = 'float-text';
+                text.style.left = Math.random() * 95 + '%';
+                text.style.bottom = '0px';
+                text.textContent = '生日快乐🎈';
+                screen.appendChild(text);
+
+                function animate() {
+                    const currentBottom = parseFloat(text.style.bottom) || 0;
+                    text.style.bottom = (currentBottom + CONFIG.floatSpeed) + 'px';
+
+                    if (currentBottom < window.innerHeight + 50) {
+                        requestAnimationFrame(animate);
+                    } else {
+                        text.remove();
+                    }
+                }
+                requestAnimationFrame(animate);
+            }
+
+            // 背景文字动画
+            function createBgText() {
+                const text = document.createElement('div');
+                text.className = 'float-text';
+                text.style.left = Math.random() * 90 + '%';
+                text.style.top = Math.random() * 90 + '%';
+                text.style.color = `rgba(255,255,255,${Math.random()*0.3+0.2})`;
+                text.style.fontSize = '24px';
+                text.textContent = CONFIG.bgTexts[Math.floor(Math.random() * CONFIG.bgTexts.length)];
+                screen.appendChild(text);
+
+                setTimeout(() => text.remove(), 3000);
+            }
+
+            // 启动动画循环
+            setInterval(createFloatingText, 300);
+            setInterval(createBgText, 1000);
+
+            // 启动打字效果
+            setTimeout(startTypewriterEffect, CONFIG.startDelay);
+        }
+
+        // 新增打字效果函数
+        function startTypewriterEffect() {
+            const container = document.getElementById('typewriter-container');
+            let currentLine = document.createElement('div');
+            container.appendChild(currentLine);
+
+            let charIndex = 0;
+            const textArray = CONFIG.textContent.split('');
+
+            function typeNextChar() {
+                if (charIndex >= textArray.length) return;
+
+                const char = textArray[charIndex];
+                const span = document.createElement('span');
+                span.className = 'type-char';
+                span.textContent = char;
+
+                // 处理换行
+                if (char === '\n') {
+                    currentLine = document.createElement('div');
+                    container.appendChild(currentLine);
+                } else {
+                    // 检查是否超出容器宽度
+                    const testSpan = document.createElement('span');
+                    testSpan.textContent = char;
+                    currentLine.appendChild(testSpan);
+
+                    if (currentLine.offsetWidth > container.offsetWidth - 20) {
+                        currentLine.removeChild(testSpan);
+                        currentLine = document.createElement('div');
+                        container.appendChild(currentLine);
+                        currentLine.appendChild(testSpan);
+                    } else {
+                        currentLine.replaceChild(span, testSpan);
+                    }
+                }
+
+                charIndex++;
+                setTimeout(typeNextChar, CONFIG.typeInterval);
+            }
+
+            typeNextChar();
+        }
+
+        // 回车键支持
+        document.getElementById('password-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') checkPassword();
+        });
+    </script>
+</body>
+</html>
