@@ -26,6 +26,10 @@
             justify-content: center;
             z-index: 1000;
             padding: 20px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='200'%3E%3Ctext x='50%25' y='50%25' font-size='150' fill='%23CCCCCC' text-anchor='middle' dominant-baseline='middle'%3EWZM%3C/text%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: contain;
         }
         /* 动画界面样式 */
         #animation-screen {
@@ -65,14 +69,24 @@
             display: inline-block;
         }
         @keyframes charAppear {
-            from { 
+            from {
                 opacity: 0;
                 transform: translateX(-20px);
             }
-            to { 
+            to {
                 opacity: 1;
                 transform: translateX(0);
             }
+        }
+        /* 落款样式 */
+        .signature {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            text-align: right;
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.5;
         }
         /* 移动端适配 */
         @media (max-width: 768px) {
@@ -80,11 +94,15 @@
                 font-size: 24px;
                 text-align: center;
             }
-            
+
+            #login-screen p {
+                font-size: 18px;
+            }
+
             #password-input {
                 width: 80% !important;
             }
-            
+
             #typewriter-container {
                 font-size: 18px;
             }
@@ -94,7 +112,8 @@
 <body>
     <!-- 初始登录界面 -->
     <div id="login-screen">
-        <h1 style="font-size: 32px; margin-bottom: 30px;">🎂生日快乐🎂</h1>
+        <h1 style="font-size: 32px; margin-bottom: 10px;">🎂生日快乐🎂</h1>
+        <p style="font-size: 22.4px; margin-bottom: 20px;">🎈这是专属于你的网页内容🎈</p>
         <input type="password" id="password-input"
                style="padding: 8px 12px; font-size: 16px; margin-bottom: 15px;"
                placeholder="请输入密码">
@@ -106,17 +125,29 @@
     <!-- 动画界面容器 -->
     <div id="animation-screen" style="display: none;">
         <div id="typewriter-container"></div>
+        <div class="signature">
+            Your friend，<br>
+            索鹏越<br>
+            2025.3.2
+        </div>
     </div>
     <script>
         // ============== 自定义设置区域 ==============
         const CONFIG = {
             password: "123456",         // 设置密码
             specialName: "某某某",       // 设置提示名字
-            bgTexts: ["Happy", "Birthday", "天天快乐", "🎂", "🎉"], 
+            bgTexts: ["Happy", "Birthday", "天天快乐", "🎂", "🎉"],
             floatSpeed: 2,              // 飘动速度（像素/帧）
-            
+
             // 打字效果配置
-            textContent: "亲爱的朋友：\n在这特别的日子里，愿所有美好如期而至！\n祝你心想事成，万事如意！🎉", 
+            textContent: "To 王梓萌：\n首先，因为今天是3月3日，所以第一句话肯定是生日快乐！当然，这四个字在这个屏幕里也飘了很多了，都是我说的哈，给我累毁了。\n" +
+                "我觉得我跟你说些正经话怪奇怪的的就不说了，你可能没看完就看不下去了，你生日也不ex你哈。\n" +
+                "这两页网页或许没有什么出奇的样式，也没有什么花哨的东西，因为它只有两百多行代码，但是，它有我的祝福，所以它就是非常好（主要是我也不会啥花哨的东西…也不太清楚这个代码语言有什么很花哨的功能，这网页有些功能都还是我搜了蛮久才知道的，能力有限哈，学的不多只能暂时做成这种样子了）。\n" +
+                "然后的话，也没啥文采，祝福的话肯定是想不出来啥比较高级的，我也不想去AI捞这些话，说多了反而不真诚，还假，所以，\n" +
+                "这几年来能认识你很高兴，能从之前的陌生网友发展到现在的关系也是很难得了，毕竟以前加了那么多网友，能真正畅聊到现在的也只有两个，这么多年经历的各种事儿肯定也说不清了，还是文采不行，不太会说哎，以后再多跟你来些互怼的次数应该会好些吧。。\n" +
+                "也祝下我文采上升吧嘻嘻！\n" +
+                "最后，在这特别的日子里，愿所有的美好如期而至！\n" +
+                "祝你心想事成，万事如意！🎉",
             typeInterval: 100,          // 字符间隔（毫秒）
             startDelay: 2000            // 开始延迟（毫秒）
         };
@@ -172,7 +203,7 @@
             // 启动动画循环
             setInterval(createFloatingText, 300);
             setInterval(createBgText, 1000);
-            
+
             // 启动打字效果
             setTimeout(startTypewriterEffect, CONFIG.startDelay);
         }
@@ -180,13 +211,13 @@
         function startTypewriterEffect() {
             const container = document.getElementById('typewriter-container');
             container.innerHTML = '';
-            
+
             let currentLine = document.createElement('div');
             container.appendChild(currentLine);
-            
+
             let charIndex = 0;
             const textArray = CONFIG.textContent.split('');
-            
+
             // 创建测量元素
             const measureSpan = document.createElement('span');
             measureSpan.style.visibility = 'hidden';
@@ -199,7 +230,7 @@
                     return;
                 }
                 const char = textArray[charIndex];
-                
+
                 // 处理换行符
                 if (char === '\n') {
                     currentLine = document.createElement('div');
@@ -210,7 +241,7 @@
                 // 测量文字宽度
                 measureSpan.textContent = currentLine.textContent + char;
                 const currentWidth = measureSpan.offsetWidth;
-                
+
                 // 自动换行逻辑
                 if (currentWidth > container.offsetWidth) {
                     currentLine = document.createElement('div');
