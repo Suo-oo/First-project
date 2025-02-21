@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>生日祝福完整版</title>
+    <title>Birthday</title>
     <!-- 添加移动端视口设置 -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <style>
@@ -44,11 +44,11 @@
         /* 飘动文字样式 */
         .float-text {
             position: absolute;
-            color: white;
+            color: darkgray;
             font-size: 16px;
             white-space: nowrap;
             font-family: 'Microsoft YaHei', sans-serif;
-            z-index: 1;
+            z-index: 1; /* 调整层级，低于打字效果文字 */
         }
         /* 打字效果容器 */
         #typewriter-container {
@@ -57,9 +57,9 @@
             left: 20px;
             width: calc(100% - 40px);
             color: white;
-            font-size: 24px;
-            line-height: 1.5;
-            z-index: 2;
+            font-size: 16px;
+            line-height: 1.2;
+            z-index: 2; /* 确保打字效果文字在上层 */
             pointer-events: none;
         }
         /* 单个字符样式 */
@@ -91,12 +91,12 @@
         /* 移动端适配 */
         @media (max-width: 768px) {
             #login-screen h1 {
-                font-size: 24px;
+                font-size: 20px;
                 text-align: center;
             }
 
             #login-screen p {
-                font-size: 18px;
+                font-size: 15px;
             }
 
             #password-input {
@@ -113,10 +113,10 @@
     <!-- 初始登录界面 -->
     <div id="login-screen">
         <h1 style="font-size: 32px; margin-bottom: 10px;">🎂生日快乐🎂</h1>
-        <p style="font-size: 22.4px; margin-bottom: 20px;">🎈这是专属于你的网页内容🎈</p>
+        <p style="font-size: 19px; margin-bottom: 10px;">🎈这是专属于你的网页内容🎈</p>
         <input type="password" id="password-input"
                style="padding: 8px 12px; font-size: 16px; margin-bottom: 15px;"
-               placeholder="请输入密码">
+               placeholder="请输入四位数密码">
         <button onclick="checkPassword()"
                 style="padding: 8px 20px; font-size: 16px; background: #FFB6C1;">
             验证祝福
@@ -128,24 +128,24 @@
         <div class="signature">
             Your friend，<br>
             索鹏越<br>
-            2025.3.2
+            2025.3.1 作
         </div>
     </div>
     <script>
         // ============== 自定义设置区域 ==============
         const CONFIG = {
-            password: "123456",         // 设置密码
+            password: "0303",         // 设置密码
             specialName: "某某某",       // 设置提示名字
             bgTexts: ["Happy", "Birthday", "天天快乐", "🎂", "🎉"],
             floatSpeed: 2,              // 飘动速度（像素/帧）
 
             // 打字效果配置
-            textContent: "To 王梓萌：\n首先，因为今天是3月3日，所以第一句话肯定是生日快乐！当然，这四个字在这个屏幕里也飘了很多了，都是我说的哈，给我累毁了。\n" +
+            textContent: "To 王梓萌：\n首先，因为今天是3月3日，所以第一句话肯定是生日快乐！当然，这四个字这里也飘了很多了，其实都是我说的哈\n" +
                 "我觉得我跟你说些正经话怪奇怪的的就不说了，你可能没看完就看不下去了，你生日也不ex你哈。\n" +
                 "这两页网页或许没有什么出奇的样式，也没有什么花哨的东西，因为它只有两百多行代码，但是，它有我的祝福，所以它就是非常好（主要是我也不会啥花哨的东西…也不太清楚这个代码语言有什么很花哨的功能，这网页有些功能都还是我搜了蛮久才知道的，能力有限哈，学的不多只能暂时做成这种样子了）。\n" +
                 "然后的话，也没啥文采，祝福的话肯定是想不出来啥比较高级的，我也不想去AI捞这些话，说多了反而不真诚，还假，所以，\n" +
                 "这几年来能认识你很高兴，能从之前的陌生网友发展到现在的关系也是很难得了，毕竟以前加了那么多网友，能真正畅聊到现在的也只有两个，这么多年经历的各种事儿肯定也说不清了，还是文采不行，不太会说哎，以后再多跟你来些互怼的次数应该会好些吧。。\n" +
-                "也祝下我文采上升吧嘻嘻！\n" +
+                "也祝我文采上升吧嘻嘻！\n" +
                 "最后，在这特别的日子里，愿所有的美好如期而至！\n" +
                 "祝你心想事成，万事如意！🎉",
             typeInterval: 100,          // 字符间隔（毫秒）
@@ -161,7 +161,7 @@
                 document.getElementById('login-screen').style.display = 'none';
                 startAnimation();
             } else {
-                alert(`密码错误，请重新输入✨密码肯定是${CONFIG.specialName}的生日啦`);
+                alert(`密码错误，请重新输入✨密码肯定是${CONFIG.specialName}的生日啦，注意是四位数哈`);
                 input.value = '';
             }
         }
@@ -175,7 +175,7 @@
                 text.className = 'float-text';
                 text.style.left = Math.random() * 95 + '%';
                 text.style.bottom = '0px';
-                text.textContent = '生日快乐🎈';
+                text.textContent = 'WZM生日快乐🎈';
                 screen.appendChild(text);
                 function animate() {
                     const currentBottom = parseFloat(text.style.bottom) || 0;
@@ -243,7 +243,7 @@
                 const currentWidth = measureSpan.offsetWidth;
 
                 // 自动换行逻辑
-                if (currentWidth > container.offsetWidth) {
+                if (currentWidth > container.offsetWidth - 40) { // 减去左右边距
                     currentLine = document.createElement('div');
                     container.appendChild(currentLine);
                 }
